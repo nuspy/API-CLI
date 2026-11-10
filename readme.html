@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>API-CLI &mdash; Documentazione</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --bg2: #161822;
+    --bg3: #1e2132;
+    --text: #e2e8f0;
+    --muted: #94a3b8;
+    --border: #2d3148;
+    --claude: #E87B35;
+    --codex: #10B981;
+    --gemini: #3B82F6;
+    --droid: #8B5CF6;
+    --accent: #E87B35;
+    --code-bg: #232636;
+    --radius: 8px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    font-size: 15px;
+  }
+
+  /* --- NAV --- */
+  nav {
+    position: fixed;
+    top: 0; left: 0;
+    width: 240px;
+    height: 100vh;
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
+    padding: 24px 16px;
+    overflow-y: auto;
+    z-index: 10;
+  }
+  nav h3 {
+    font-size: 14px;
+    color: var(--accent);
+    margin: 20px 0 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  nav h3:first-child { margin-top: 0; }
+  nav a {
+    display: block;
+    color: var(--muted);
+    text-decoration: none;
+    padding: 4px 0;
+    font-size: 13px;
+    transition: color 0.15s;
+  }
+  nav a:hover { color: var(--text); }
+  nav .logo {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: 24px;
+    letter-spacing: -0.5px;
+  }
+
+  /* --- MAIN --- */
+  main {
+    margin-left: 240px;
+    max-width: 820px;
+    padding: 48px 40px 80px;
+  }
+
+  h1 {
+    font-size: 36px;
+    font-weight: 800;
+    letter-spacing: -1px;
+    margin-bottom: 8px;
+  }
+  h1 .version {
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--muted);
+    vertical-align: middle;
+  }
+  .subtitle {
+    color: var(--muted);
+    font-size: 17px;
+    margin-bottom: 40px;
+  }
+
+  h2 {
+    font-size: 24px;
+    font-weight: 700;
+    margin: 48px 0 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+    letter-spacing: -0.3px;
+  }
+  h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 32px 0 12px;
+    color: var(--text);
+  }
+
+  p { margin-bottom: 12px; }
+  ul, ol {
+    margin: 8px 0 16px 24px;
+  }
+  li { margin-bottom: 4px; }
+
+  /* --- CODE --- */
+  code {
+    background: var(--code-bg);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'Cascadia Code', 'Fira Code', Consolas, monospace;
+    font-size: 13px;
+  }
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    overflow-x: auto;
+    margin: 12px 0 20px;
+    line-height: 1.5;
+  }
+  pre code {
+    background: none;
+    padding: 0;
+    font-size: 13px;
+  }
+
+  /* --- TABLE --- */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0 20px;
+    font-size: 13px;
+  }
+  th, td {
+    text-align: left;
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+  }
+  th {
+    background: var(--bg2);
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    color: var(--muted);
+  }
+  td code {
+    font-size: 12px;
+  }
+
+  /* --- BADGES --- */
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  .badge-claude  { background: rgba(232,123,53,0.15); color: var(--claude); }
+  .badge-codex   { background: rgba(16,185,129,0.15); color: var(--codex); }
+  .badge-gemini  { background: rgba(59,130,246,0.15); color: var(--gemini); }
+  .badge-droid   { background: rgba(139,92,246,0.15); color: var(--droid); }
+
+  /* --- CARDS --- */
+  .card-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 16px 0 24px;
+  }
+  .card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    border-top: 3px solid var(--border);
+  }
+  .card-claude  { border-top-color: var(--claude); }
+  .card-codex   { border-top-color: var(--codex); }
+  .card-gemini  { border-top-color: var(--gemini); }
+  .card-droid   { border-top-color: var(--droid); }
+  .card h4 {
+    font-size: 15px;
+    margin-bottom: 6px;
+  }
+  .card p {
+    font-size: 13px;
+    color: var(--muted);
+    margin: 0;
+  }
+
+  /* --- CALLOUT --- */
+  .callout {
+    background: var(--bg3);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    padding: 14px 18px;
+    margin: 16px 0 20px;
+    font-size: 14px;
+  }
+  .callout.warn { border-left-color: #f59e0b; }
+  .callout strong { color: var(--text); }
+
+  /* --- SCREENSHOT PLACEHOLDER --- */
+  .screenshot {
+    background: var(--bg2);
+    border: 1px dashed var(--border);
+    border-radius: var(--radius);
+    padding: 40px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 13px;
+    margin: 16px 0 20px;
+  }
+
+  /* --- RESPONSIVE --- */
+  @media (max-width: 900px) {
+    nav { display: none; }
+    main { margin-left: 0; padding: 24px 20px 60px; }
+    .card-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAVIGATION -->
+<nav>
+  <div class="logo">API-CLI</div>
+
+  <h3>Panoramica</h3>
+  <a href="#intro">Introduzione</a>
+  <a href="#prerequisites">Prerequisiti</a>
+  <a href="#cli-tools">CLI Tools supportati</a>
+
+  <h3>War Room (Web App)</h3>
+  <a href="#warroom-intro">Cos'&egrave;</a>
+  <a href="#warroom-install">Installazione</a>
+  <a href="#warroom-usage">Come si usa</a>
+  <a href="#warroom-agents">Gestire gli agenti</a>
+  <a href="#warroom-discussion">Discussioni multi-round</a>
+  <a href="#warroom-git">Git checkpoint &amp; undo</a>
+  <a href="#warroom-ws">Protocollo WebSocket</a>
+
+  <h3>PSLLMKit (PowerShell)</h3>
+  <a href="#psllm-intro">Cos'&egrave;</a>
+  <a href="#psllm-install">Installazione</a>
+  <a href="#psllm-commands">Comandi</a>
+  <a href="#psllm-server">Server REST</a>
+  <a href="#psllm-direct">Invocazione diretta</a>
+  <a href="#psllm-api">Endpoint API</a>
+
+  <h3>Riferimenti</h3>
+  <a href="#architecture">Architettura</a>
+  <a href="#troubleshooting">Troubleshooting</a>
+</nav>
+
+<!-- MAIN CONTENT -->
+<main>
+
+<!-- ============================================================ -->
+<h1 id="intro">API-CLI <span class="version">v0.3.0</span></h1>
+<p class="subtitle">
+  Orchestrazione multi-agente per CLI tools di AI coding.<br>
+  Due interfacce: <strong>War Room</strong> (web app) e <strong>PSLLMKit</strong> (PowerShell).
+</p>
+
+<p>
+  API-CLI permette di usare pi&ugrave; agenti AI (Claude, Codex, Gemini, Droid) da un'unica interfaccia.
+  Gli agenti possono collaborare tra loro, discutere su task di codice e modificare file
+  nella tua working directory &mdash; con safety net via git checkpoint.
+</p>
+
+<!-- ============================================================ -->
+<h2 id="prerequisites">Prerequisiti</h2>
+
+<ul>
+  <li><strong>Node.js</strong> &ge; 18 (per la web app)</li>
+  <li><strong>PowerShell</strong> &ge; 7.0 (per PSLLMKit)</li>
+  <li><strong>Git</strong> installato e nel PATH</li>
+  <li>Almeno uno dei CLI tools installato e autenticato:</li>
+</ul>
+
+<div class="card-grid">
+  <div class="card card-claude">
+    <h4><span class="badge badge-claude">Claude</span> Anthropic</h4>
+    <p>Comando: <code>claude</code><br>Auth: OAuth automatico</p>
+  </div>
+  <div class="card card-codex">
+    <h4><span class="badge badge-codex">Codex</span> OpenAI</h4>
+    <p>Comando: <code>codex</code><br>Auth: <code>OPENAI_API_KEY</code></p>
+  </div>
+  <div class="card card-gemini">
+    <h4><span class="badge badge-gemini">Gemini</span> Google</h4>
+    <p>Comando: <code>gemini</code><br>Auth: <code>GEMINI_API_KEY</code></p>
+  </div>
+  <div class="card card-droid">
+    <h4><span class="badge badge-droid">Droid</span> Factory</h4>
+    <p>Comando: <code>droid</code><br>Auth: OAuth automatico</p>
+  </div>
+</div>
+
+<p>Verifica l'installazione:</p>
+<pre><code>claude --version
+codex --version
+gemini --version
+droid --version</code></pre>
+
+<!-- ============================================================ -->
+<h2 id="cli-tools">CLI Tools &mdash; Dettagli invocazione</h2>
+
+<table>
+  <tr>
+    <th>Tool</th>
+    <th>Invocazione</th>
+    <th>Sessione</th>
+    <th>Output</th>
+  </tr>
+  <tr>
+    <td><span class="badge badge-claude">Claude</span></td>
+    <td><code>claude -p "prompt" --output-format json</code></td>
+    <td><code>--resume &lt;SID&gt;</code></td>
+    <td>JSON: <code>{result, session_id}</code></td>
+  </tr>
+  <tr>
+    <td><span class="badge badge-codex">Codex</span></td>
+    <td><code>codex exec -</code> (stdin)</td>
+    <td>No</td>
+    <td>Testo raw</td>
+  </tr>
+  <tr>
+    <td><span class="badge badge-gemini">Gemini</span></td>
+    <td><code>gemini -p "prompt"</code></td>
+    <td>No</td>
+    <td>Testo raw</td>
+  </tr>
+  <tr>
+    <td><span class="badge badge-droid">Droid</span></td>
+    <td><code>droid exec "prompt" -o json</code></td>
+    <td><code>-s &lt;SID&gt;</code></td>
+    <td>JSON: <code>{result, session_id}</code></td>
+  </tr>
+</table>
+
+<!-- ============================================================ -->
+<!-- WAR ROOM -->
+<!-- ============================================================ -->
+<h2 id="warroom-intro">War Room &mdash; Web App</h2>
+
+<p>
+  La War Room &egrave; un'interfaccia web che permette a pi&ugrave; agenti AI di collaborare
+  in una chat condivisa. Tu invii un messaggio, gli agenti rispondono e discutono tra loro
+  in round successivi, fino a convergenza o stop manuale.
+</p>
+
+<h3 id="warroom-install">Installazione e avvio</h3>
+
+<pre><code># Vai nella directory webapp
+cd D:\Projects\API-CLI\webapp
+
+# Installa le dipendenze (solo la prima volta)
+npm install
+
+# Avvia in modalit&agrave; development
+npm run dev</code></pre>
+
+<p>Si apriranno due server:</p>
+<ul>
+  <li><strong>Vite</strong> (frontend) &rarr; <code>http://localhost:5173</code></li>
+  <li><strong>Express</strong> (backend + WS) &rarr; <code>http://localhost:3001</code></li>
+</ul>
+<p>Apri <code>http://localhost:5173</code> nel browser.</p>
+
+<h4>Modalit&agrave; produzione</h4>
+<pre><code># Build del frontend
+npm run build
+
+# Avvia solo il server Express (serve i file statici da dist/)
+npm start</code></pre>
+<p>In produzione tutto gira su <code>http://localhost:3001</code>.</p>
+
+<!-- USAGE -->
+<h3 id="warroom-usage">Come si usa</h3>
+
+<ol>
+  <li>
+    <strong>Imposta la Working Directory</strong><br>
+    Nella sidebar, inserisci il path della directory su cui vuoi lavorare
+    (es. <code>D:\Projects\MyApp</code>) e clicca <strong>Set</strong>.<br>
+    Se non &egrave; un repo git, ne verr&agrave; creato uno automaticamente.
+  </li>
+  <li>
+    <strong>Aggiungi gli agenti</strong><br>
+    Scegli il tipo (claude, codex, gemini, droid), dai un nome custom opzionale, e clicca <strong>+</strong>.
+  </li>
+  <li>
+    <strong>Seleziona i target</strong><br>
+    Sotto l'area di input, le checkbox ti permettono di scegliere a quali agenti inviare il messaggio.
+    Di default sono tutti selezionati.
+  </li>
+  <li>
+    <strong>Invia il messaggio</strong><br>
+    Scrivi nel campo di testo e premi <strong>Enter</strong> (o clicca Send).
+    <code>Shift+Enter</code> per andare a capo.
+  </li>
+  <li>
+    <strong>Osserva la discussione</strong><br>
+    Gli agenti rispondono e vedono le risposte degli altri. La discussione
+    procede in round (max 10). L'indicatore in alto mostra il round corrente.
+  </li>
+  <li>
+    <strong>Stop o convergenza</strong><br>
+    La discussione si ferma quando tutti gli agenti rispondono <code>[PASS]</code>
+    (convergenza) o quando premi <strong>Stop</strong>.
+  </li>
+</ol>
+
+<!-- AGENTS -->
+<h3 id="warroom-agents">Gestire gli agenti</h3>
+
+<p>Ogni agente nella sidebar mostra:</p>
+<ul>
+  <li><strong>Pallino di stato</strong>: grigio (idle), verde pulsante (thinking), rosso (error)</li>
+  <li><strong>Badge colorato</strong> con il tipo di CLI tool</li>
+  <li><strong>&#x21bb;</strong> &mdash; Reset della sessione (solo per agenti con sessione: Claude, Droid)</li>
+  <li><strong>&times;</strong> &mdash; Rimuovi l'agente</li>
+</ul>
+
+<p>Puoi aggiungere pi&ugrave; agenti dello stesso tipo con nomi diversi (es. due Claude con ruoli diversi).</p>
+
+<div class="callout">
+  <strong>Sessioni:</strong> Claude e Droid mantengono una sessione nativa. Nelle invocazioni successive
+  il CLI ricorda il contesto precedente. Codex e Gemini ricevono invece l'intera storia della conversazione
+  ad ogni invocazione.
+</div>
+
+<!-- DISCUSSION -->
+<h3 id="warroom-discussion">Discussioni multi-round</h3>
+
+<p>Il motore di discussione funziona cos&igrave;:</p>
+<ol>
+  <li>Il tuo messaggio viene inviato a tutti gli agenti selezionati <strong>in parallelo</strong>.</li>
+  <li>Ogni agente risponde. Le risposte appaiono in chat in tempo reale.</li>
+  <li>Le risposte di un round diventano contesto per il round successivo.</li>
+  <li>Se un agente risponde <code>[PASS]</code>, viene escluso dai round successivi.</li>
+  <li>Quando tutti passano &rarr; <strong>convergenza naturale</strong>.</li>
+  <li>Massimo 10 round, poi stop automatico.</li>
+  <li>Puoi premere <strong>Stop</strong> in qualsiasi momento per terminare tutti i processi.</li>
+</ol>
+
+<div class="callout warn">
+  <strong>Timeout:</strong> Ogni agente ha un timeout di 5 minuti. Se un agente non risponde
+  in tempo, il suo processo viene terminato e l'errore viene mostrato in chat.
+</div>
+
+<!-- GIT -->
+<h3 id="warroom-git">Git checkpoint &amp; undo</h3>
+
+<p>
+  Ogni volta che inizia un nuovo round, la War Room esegue un <strong>git checkpoint</strong>
+  automatico (<code>git add -A &amp;&amp; git commit</code>). Questo permette di tornare indietro
+  se un agente fa modifiche indesiderate.
+</p>
+
+<ul>
+  <li><strong>Undo Last Round</strong> (pulsante nella sidebar) &rarr; esegue <code>git reset --hard</code>
+    al checkpoint precedente.</li>
+  <li>Puoi fare undo multipli (uno per ogni round).</li>
+  <li>All'avvio viene creato un branch dedicato <code>warroom-{timestamp}</code>.</li>
+</ul>
+
+<!-- WS PROTOCOL -->
+<h3 id="warroom-ws">Protocollo WebSocket</h3>
+
+<p>La comunicazione tra frontend e backend avviene via WebSocket su <code>/ws</code>.</p>
+
+<h4>Client &rarr; Server</h4>
+<table>
+  <tr><th>Tipo</th><th>Payload</th><th>Descrizione</th></tr>
+  <tr><td><code>add_agent</code></td><td><code>{ appType, name?, model? }</code></td><td>Aggiungi agente</td></tr>
+  <tr><td><code>remove_agent</code></td><td><code>{ id }</code></td><td>Rimuovi agente</td></tr>
+  <tr><td><code>user_message</code></td><td><code>{ content, targetAgentIds[] }</code></td><td>Invia messaggio</td></tr>
+  <tr><td><code>stop</code></td><td>&mdash;</td><td>Ferma la discussione</td></tr>
+  <tr><td><code>undo</code></td><td>&mdash;</td><td>Undo ultimo round</td></tr>
+  <tr><td><code>set_work_dir</code></td><td><code>{ path }</code></td><td>Imposta working dir</td></tr>
+  <tr><td><code>reset_session</code></td><td><code>{ agentId }</code></td><td>Reset sessione agente</td></tr>
+</table>
+
+<h4>Server &rarr; Client</h4>
+<table>
+  <tr><th>Tipo</th><th>Payload</th><th>Descrizione</th></tr>
+  <tr><td><code>agents</code></td><td><code>{ agents[] }</code></td><td>Lista agenti aggiornata</td></tr>
+  <tr><td><code>message</code></td><td><code>{ id, role, agentId?, content, round?, ... }</code></td><td>Messaggio in chat</td></tr>
+  <tr><td><code>agent_status</code></td><td><code>{ agentId, status }</code></td><td>Stato agente: idle/thinking/error</td></tr>
+  <tr><td><code>round</code></td><td><code>{ current, max }</code></td><td>Round corrente</td></tr>
+  <tr><td><code>stopped</code></td><td><code>{ reason, round }</code></td><td>Discussione terminata</td></tr>
+  <tr><td><code>undo_result</code></td><td><code>{ success, restoredTo?, error? }</code></td><td>Risultato undo</td></tr>
+  <tr><td><code>work_dir</code></td><td><code>{ path, valid }</code></td><td>Stato working dir</td></tr>
+  <tr><td><code>error</code></td><td><code>{ message }</code></td><td>Errore generico</td></tr>
+</table>
+
+<!-- ============================================================ -->
+<!-- PSLLMKIT -->
+<!-- ============================================================ -->
+<h2 id="psllm-intro">PSLLMKit &mdash; Modulo PowerShell</h2>
+
+<p>
+  PSLLMKit &egrave; un modulo PowerShell che fa da gateway REST verso i CLI tools di AI.
+  Ogni app (Claude, Codex, Gemini, Droid) pu&ograve; essere avviata come server HTTP indipendente
+  con i propri endpoint, oppure invocata direttamente senza server.
+</p>
+
+<h3 id="psllm-install">Installazione</h3>
+
+<pre><code># Importa il modulo
+Import-Module D:\Projects\API-CLI\PSLLMKit.psd1
+
+# Verifica
+Get-Module PSLLMKit</code></pre>
+
+<h3 id="psllm-commands">Comandi disponibili</h3>
+
+<table>
+  <tr><th>Cmdlet</th><th>Descrizione</th></tr>
+  <tr>
+    <td><code>Start-LLMServer</code></td>
+    <td>Avvia un server REST per un app su una porta specifica</td>
+  </tr>
+  <tr>
+    <td><code>Stop-LLMServer</code></td>
+    <td>Ferma un server (per app o tutti)</td>
+  </tr>
+  <tr>
+    <td><code>Get-LLMServerStatus</code></td>
+    <td>Mostra lo stato dei server attivi</td>
+  </tr>
+  <tr>
+    <td><code>Invoke-LLMPrompt</code></td>
+    <td>Invoca un CLI tool direttamente (senza server)</td>
+  </tr>
+  <tr>
+    <td><code>Get-InstalledCLITools</code></td>
+    <td>Elenca i CLI tools installati e disponibili</td>
+  </tr>
+  <tr>
+    <td><code>Register-CLITool</code></td>
+    <td>Registra un nuovo CLI tool custom</td>
+  </tr>
+  <tr>
+    <td><code>Invoke-CLITool</code></td>
+    <td>Invocazione low-level di un CLI tool</td>
+  </tr>
+</table>
+
+<!-- SERVER -->
+<h3 id="psllm-server">Modalit&agrave; Server REST</h3>
+
+<p>Ogni app gira come server HTTP indipendente su una porta a scelta:</p>
+
+<pre><code># Avvia Claude sulla porta 8081
+Start-LLMServer -App claude -Port 8081
+
+# Avvia Droid sulla porta 8082
+Start-LLMServer -App droid -Port 8082
+
+# Vedi chi &egrave; attivo
+Get-LLMServerStatus
+
+# Ferma un server specifico
+Stop-LLMServer -App claude
+
+# Ferma tutti
+Stop-LLMServer -All</code></pre>
+
+<h3 id="psllm-api">Endpoint API</h3>
+
+<p>Ogni server espone questi endpoint:</p>
+
+<table>
+  <tr><th>Metodo</th><th>Path</th><th>Descrizione</th></tr>
+  <tr>
+    <td><code>POST</code></td>
+    <td><code>/api/prompt</code></td>
+    <td>Invia un prompt. Body: <code>{ "prompt": "...", "model": "...", "systemPrompt": "..." }</code></td>
+  </tr>
+  <tr>
+    <td><code>GET</code></td>
+    <td><code>/api/status</code></td>
+    <td>Info sull'istanza: app, porta, uptime, session ID</td>
+  </tr>
+  <tr>
+    <td><code>POST</code></td>
+    <td><code>/api/session/reset</code></td>
+    <td>Reset della conversazione (cancella session ID)</td>
+  </tr>
+  <tr>
+    <td><code>GET</code></td>
+    <td><code>/api/health</code></td>
+    <td>Health check</td>
+  </tr>
+</table>
+
+<h4>Esempio con curl</h4>
+<pre><code># Invia un prompt a Claude
+curl -X POST http://localhost:8081/api/prompt \
+  -H "Content-Type: application/json" \
+  -d '{"prompt": "Spiega il pattern Observer in 3 righe"}'
+
+# Risposta:
+# { "content": "...", "sessionId": "abc-123", "duration": 4200 }</code></pre>
+
+<!-- DIRECT -->
+<h3 id="psllm-direct">Invocazione diretta (senza server)</h3>
+
+<p>Puoi invocare un CLI tool direttamente senza avviare il server:</p>
+
+<pre><code># Prompt singolo a Claude
+Invoke-LLMPrompt -App claude -Prompt "Come funziona async/await?"
+
+# Con modello specifico
+Invoke-LLMPrompt -App gemini -Prompt "Refactora questo codice" -Model "gemini-2.0-flash"
+
+# Con sessione (per continuare una conversazione)
+$r = Invoke-LLMPrompt -App claude -Prompt "Crea una funzione di login"
+Invoke-LLMPrompt -App claude -Prompt "Aggiungi validazione" -SessionId $r.SessionId</code></pre>
+
+<p>L'output &egrave; un oggetto <code>PSLLMKit.Response</code>:</p>
+<table>
+  <tr><th>Propriet&agrave;</th><th>Tipo</th><th>Descrizione</th></tr>
+  <tr><td><code>Content</code></td><td>string</td><td>La risposta dell'agente</td></tr>
+  <tr><td><code>App</code></td><td>string</td><td>Il tool usato (claude, codex, ecc.)</td></tr>
+  <tr><td><code>Model</code></td><td>string</td><td>Il modello usato</td></tr>
+  <tr><td><code>SessionId</code></td><td>string</td><td>ID sessione (per continuare la conversazione)</td></tr>
+  <tr><td><code>Duration</code></td><td>int</td><td>Durata in millisecondi</td></tr>
+  <tr><td><code>Timestamp</code></td><td>datetime</td><td>Timestamp della risposta</td></tr>
+</table>
+
+<!-- ============================================================ -->
+<h2 id="architecture">Architettura</h2>
+
+<h3>Struttura del progetto</h3>
+<pre><code>D:\Projects\API-CLI\
+&#9500;&#9472;&#9472; PSLLMKit.psd1           # Module manifest
+&#9500;&#9472;&#9472; PSLLMKit.psm1           # Module loader
+&#9500;&#9472;&#9472; Private/
+&#9474;   &#9500;&#9472;&#9472; Configuration.ps1   # Config management
+&#9474;   &#9500;&#9472;&#9472; HttpServer.ps1      # HTTP server (background runspace)
+&#9474;   &#9492;&#9472;&#9472; ProcessRunner.ps1   # CLI tool registry + execution
+&#9500;&#9472;&#9472; Public/
+&#9474;   &#9500;&#9472;&#9472; Start-LLMServer.ps1
+&#9474;   &#9500;&#9472;&#9472; Stop-LLMServer.ps1
+&#9474;   &#9500;&#9472;&#9472; Get-LLMServerStatus.ps1
+&#9474;   &#9492;&#9472;&#9472; Invoke-LLMPrompt.ps1
+&#9500;&#9472;&#9472; Tests/
+&#9474;   &#9492;&#9472;&#9472; Unit/
+&#9474;       &#9500;&#9472;&#9472; ProcessRunner.Tests.ps1
+&#9474;       &#9492;&#9472;&#9472; Server.Tests.ps1
+&#9492;&#9472;&#9472; webapp/
+    &#9500;&#9472;&#9472; server.js               # Entry point Express
+    &#9500;&#9472;&#9472; src/server/             # Backend: WS, adapters, orchestrator
+    &#9492;&#9472;&#9472; src/client/             # Frontend: React + hooks + components</code></pre>
+
+<h3>War Room &mdash; Flusso dati</h3>
+<pre><code>Browser (React)
+   &#9474;  WebSocket (/ws)
+   &#9660;
+Express + WS Server
+   &#9474;  wsHandler.js &rarr; routes messages
+   &#9660;
+Orchestrator
+   &#9474;  Multi-round loop (max 10)
+   &#9474;  Parallel agent invocation
+   &#9474;  [PASS] convergence detection
+   &#9660;
+CLI Adapters
+   &#9474;  child_process.spawn()
+   &#9660;
+claude / codex / gemini / droid
+   (processi CLI locali)</code></pre>
+
+<!-- ============================================================ -->
+<h2 id="troubleshooting">Troubleshooting</h2>
+
+<h3>"command not found" per un CLI tool</h3>
+<p>
+  Il tool non &egrave; installato o non &egrave; nel PATH. Installa il tool e riavvia il terminale.
+  Verifica con <code>where claude</code> (Windows) o <code>which claude</code> (Unix).
+</p>
+
+<h3>Porta gi&agrave; in uso</h3>
+<p>
+  Un altro processo usa la porta. Cambia porta o chiudi il processo:
+</p>
+<pre><code># Trova chi usa la porta 3001
+netstat -ano | findstr :3001
+
+# Oppure per PSLLMKit, usa una porta diversa
+Start-LLMServer -App claude -Port 8090</code></pre>
+
+<h3>WebSocket non si connette</h3>
+<p>
+  Assicurati che il server Express sia in esecuzione sulla porta 3001.
+  In dev mode, Vite fa proxy automatico verso il backend.
+</p>
+
+<h3>Agente non risponde (timeout)</h3>
+<p>
+  Il timeout di default &egrave; 5 minuti. Se l'agente &egrave; lento (es. task complessi),
+  il processo viene terminato dopo il timeout. Controlla che il CLI tool sia autenticato
+  correttamente eseguendolo manualmente: <code>claude -p "test"</code>.
+</p>
+
+<h3>Undo non funziona</h3>
+<p>
+  L'undo richiede che la working directory sia impostata e sia un repo git valido.
+  Verifica che il pallino "Git ready" sia verde nella sidebar.
+</p>
+
+<h3>Errori di importazione PSLLMKit</h3>
+<pre><code># Assicurati di usare PowerShell 7+
+$PSVersionTable.PSVersion
+
+# Importa con path assoluto
+Import-Module D:\Projects\API-CLI\PSLLMKit.psd1 -Force -Verbose</code></pre>
+
+</main>
+
+</body>
+</html>

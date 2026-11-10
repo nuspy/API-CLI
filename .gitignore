@@ -1,0 +1,12 @@
+node_modules/
+webapp/dist/
+dist/
+.env
+.env.*
+*.log
+*.bak
+*.zip
+.vscode/
+.idea/
+# empty root lockfile
+/package-lock.json
